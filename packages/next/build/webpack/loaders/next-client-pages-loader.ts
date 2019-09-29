@@ -1,5 +1,6 @@
 import { loader } from 'webpack'
 import loaderUtils from 'loader-utils'
+import { NEXT_P_KEY } from '../../../client/consts'
 
 export type ClientPagesLoaderOptions = {
   absolutePagePath: string
@@ -12,7 +13,7 @@ const nextClientPagesLoader: loader.Loader = function() {
   const stringifiedPage = JSON.stringify(page)
 
   return `
-    (window.__NEXT_P=window.__NEXT_P||[]).push([${stringifiedPage}, function() {
+    (window[${NEXT_P_KEY}]=window[${NEXT_P_KEY}]||[]).push([${stringifiedPage}, function() {
       var mod = require(${stringifiedAbsolutePagePath})
       if(module.hot) {
         module.hot.accept(${stringifiedAbsolutePagePath}, function() {

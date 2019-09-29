@@ -1,4 +1,5 @@
 import Router from '../router'
+import { NEXT_DATA_KEY } from '../consts'
 
 export default function initializeBuildWatcher () {
   const shadowHost = document.createElement('div')
@@ -43,7 +44,7 @@ export default function initializeBuildWatcher () {
   const dismissUntil = parseInt(window.localStorage.getItem(dismissKey), 10)
   const dismissed = dismissUntil > new Date().getTime()
 
-  let isVisible = !dismissed && window.__NEXT_DATA__.nextExport
+  let isVisible = !dismissed && window[NEXT_DATA_KEY].nextExport
 
   function updateContainer () {
     if (isVisible) {

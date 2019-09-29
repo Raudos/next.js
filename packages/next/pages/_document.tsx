@@ -13,6 +13,7 @@ import {
   CLIENT_STATIC_FILES_RUNTIME_AMP,
   CLIENT_STATIC_FILES_RUNTIME_WEBPACK,
 } from '../next-server/lib/constants'
+import { NEXT_DATA_KEY, NEXT_MOUNT_ELEMENT_ID } from '../client/consts'
 
 export { DocumentContext, DocumentInitialProps, DocumentProps }
 
@@ -483,7 +484,12 @@ export class Main extends Component {
   render() {
     const { inAmpMode, html } = this.context._documentProps
     if (inAmpMode) return '__NEXT_AMP_RENDER_TARGET__'
-    return <div id="__next" dangerouslySetInnerHTML={{ __html: html }} />
+    return (
+      <div
+        id={NEXT_MOUNT_ELEMENT_ID}
+        dangerouslySetInnerHTML={{ __html: html }}
+      />
+    )
   }
 }
 
@@ -609,7 +615,7 @@ export class NextScript extends Component<OriginProps> {
         <>
           {staticMarkup ? null : (
             <script
-              id="__NEXT_DATA__"
+              id={NEXT_DATA_KEY}
               type="application/json"
               nonce={this.props.nonce}
               crossOrigin={this.props.crossOrigin || process.crossOrigin}
@@ -728,7 +734,7 @@ export class NextScript extends Component<OriginProps> {
           : null}
         {staticMarkup ? null : (
           <script
-            id="__NEXT_DATA__"
+            id={NEXT_DATA_KEY}
             type="application/json"
             nonce={this.props.nonce}
             crossOrigin={this.props.crossOrigin || process.crossOrigin}

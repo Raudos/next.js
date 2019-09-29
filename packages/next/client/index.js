@@ -17,6 +17,12 @@ import { RouterContext } from '../next-server/lib/router-context'
 import { DataManager } from '../next-server/lib/data-manager'
 import { parse as parseQs, stringify as stringifyQs } from 'querystring'
 import { isDynamicRoute } from '../next-server/lib/router/utils/is-dynamic'
+import {
+  NEXT_DATA_KEY,
+  NEXT_MOUNT_ELEMENT_ID,
+  NEXT_P_KEY,
+  NEXT_PRELOAD_READY_KEY
+} from './consts'
 
 // Polyfill Promise globally
 // This is needed because Webpack's dynamic loading(common chunks) code
@@ -27,8 +33,8 @@ if (!window.Promise) {
   window.Promise = Promise
 }
 
-const data = JSON.parse(document.getElementById('__NEXT_DATA__').textContent)
-window.__NEXT_DATA__ = data
+const data = JSON.parse(document.getElementById(NEXT_DATA_KEY).textContent)
+window[NEXT_DATA_KEY] = data
 
 export const version = process.env.__NEXT_VERSION
 
@@ -43,7 +49,7 @@ const {
   dynamicIds
 } = data
 
-const d = JSON.parse(window.__NEXT_DATA__.dataManager)
+const d = JSON.parse(window[NEXT_DATA_KEY].dataManager)
 export const dataManager = new DataManager(d)
 
 const prefix = assetPrefix || ''
@@ -61,14 +67,14 @@ const asPath = getURL()
 
 const pageLoader = new PageLoader(buildId, prefix)
 const register = ([r, f]) => pageLoader.registerPage(r, f)
-if (window.__NEXT_P) {
-  window.__NEXT_P.map(register)
+if (window[NEXT_P_KEY]) {
+  window[NEXT_P_KEY].map(register)
 }
-window.__NEXT_P = []
-window.__NEXT_P.push = register
+window[NEXT_P_KEY] = []
+window[NEXT_P_KEY].push = register
 
 const headManager = new HeadManager()
-const appElement = document.getElementById('__next')
+const appElement = document.getElementById(NEXT_MOUNT_ELEMENT_ID)
 
 let lastAppProps
 let webpackHMR
@@ -159,8 +165,8 @@ export default async ({ webpackHMR: passedWebpackHMR } = {}) => {
     initialErr = error
   }
 
-  if (window.__NEXT_PRELOADREADY) {
-    await window.__NEXT_PRELOADREADY(dynamicIds)
+  if (window[NEXT_PRELOAD_READY_KEY]) {
+    await window[NEXT_PRELOAD_READY_KEY](dynamicIds)
   }
 
   router = createRouter(page, query, asPath, {
